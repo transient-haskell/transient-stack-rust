@@ -86,6 +86,14 @@ pub fn cor<A: Send + 'static>(x: Cloud<A>, y: Cloud<A>) -> Cloud<A> {
     Cloud(or(x.0, y.0))
 }
 
+/// `x | y` is `cor(x, y)`: alternatives read in a row, as `<|>` does in Haskell
+impl<A: Send + 'static> BitOr for Cloud<A> {
+    type Output = Cloud<A>;
+    fn bitor(self, y: Cloud<A>) -> Cloud<A> {
+        cor(self, y)
+    }
+}
+
 /// The result of the computation goes to the log and replaces everything that was logged inside (`loggedc`)
 pub fn loggedc<A: Loggable + Send + Sync + 'static>(c: Cloud<A>) -> Cloud<A> {
     loggedc_with(false, c)

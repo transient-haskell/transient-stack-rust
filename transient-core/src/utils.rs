@@ -59,20 +59,20 @@ fn init_web_app_with<A: Loggable + Send + Sync + 'static>(table: Closures, node:
     tdo! {
         [listening, app]
         init_state(node, Arc::new(table));
-        or(or(listening, first_cont()), pure(()));
+        listening | first_cont() | pure(());
         abduce();
         app
     }
 }
 
 /// Console commands to see and extend the list of known nodes (`inputNodes`). It never gives a result, so it is used as an
-/// alternative of the program: `cor(input_nodes(), app)`.
+/// alternative of the program: `input_nodes() | app`.
 ///
 /// * `nodes` lists the known nodes.
 /// * `add <host> <port> <y|n>` adds a node. `y` is for connecting to it to exchange the lists of nodes (`connect'`),
 ///   which is not ported yet: the node is added anyway.
 pub fn input_nodes<A: Loggable + Clone + Send + Sync + 'static>() -> Cloud<A> {
-    cor(list_nodes(), add_new())
+    list_nodes() | add_new()
 }
 
 fn list_nodes<A: Send + 'static>() -> Cloud<A> {

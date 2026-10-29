@@ -153,27 +153,25 @@ fn calls_to_peers(peers: Vec<Node>, r: Vec<i64>) -> Cloud<()> {
 /// The caller makes a job and calls the first known node. If it is down, the call fails and the job is kept for it; when it is
 /// up and runs its jobs, it pings the known nodes and the caller launches the job again (runping.sh).
 fn ping_program() -> Cloud<()> {
-    cor(
-        input_nodes(),
-        cdo! {
-            run_jobs();
-            local(option("go", "run the test"));
-            let nodes = local(get_nodes());
-            job();
-            let r = run_at(peer(&nodes), local_io(|| {
-                println!("WORK");
-                7i64
-            }));
-            local_io(move || println!("RESULT {r}"))
-        },
-    )
+    let call = cdo! {
+        run_jobs();
+        local(option("go", "run the test"));
+        let nodes = local(get_nodes());
+        job();
+        let r = run_at(peer(&nodes), local_io(|| {
+            println!("WORK");
+            7i64
+        }));
+        local_io(move || println!("RESULT {r}"))
+    };
+    input_nodes() | call
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let program = args[1].clone();
     // the nodes can be added in the command line, and the program has to see them: they are the alternative of the program
-    let with_nodes = |app: Cloud<()>| cor(input_nodes(), app);
+    let with_nodes = |app: Cloud<()>| input_nodes() | app;
     std::thread::spawn(|| {
         std::thread::sleep(Duration::from_millis(500));
         println!("READY");

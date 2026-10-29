@@ -71,7 +71,7 @@ fn link() -> Cloud<()> {
 }
 
 fn widgets() -> Cloud<()> {
-    cor(person(), cor(radio(), cor(check_boxes(), cor(select(), link()))))
+    person() | radio() | check_boxes() | select() | link()
 }
 
 fn main() {

@@ -22,7 +22,7 @@ use transient_core::*;
 fn guessgame(name: String) -> Cloud<()> {
     cdo! {
         [name]
-        cor(minput::<(), _>("guessgame", "play guessgame"), published("lock"));
+        minput::<(), _>("guessgame", "play guessgame") | published("lock");
         let lock = minput::<i64, _>("enterlock", format!("{name}: lock a number to guess it"));
         let guess = publish(true, "lock", minput::<i64, _>("enterguess", format!("guess the number entered by: {name}")));
         local_io({
@@ -103,7 +103,7 @@ fn main() {
     let _: Result<(), String> = match args[1].as_str() {
         "multiuser" => keep_args(rest, init_node(multiuser())),
         "appminput" => keep_args(rest, init_node(appminput())),
-        "endpt" => keep_args(rest, init_node(cor(option_endpoints(), multiuser()))),
+        "endpt" => keep_args(rest, init_node(option_endpoints() | multiuser())),
         "post" => keep_args(rest, init_node(post_demo())),
         "collectback" => keep_args(rest, init_node(collect_back_demo())),
         "collect" => keep_args(rest, init_node(collect_demo())),

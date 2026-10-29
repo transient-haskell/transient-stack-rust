@@ -103,7 +103,7 @@ pub fn run_jobs() -> Cloud<()> {
     fork_cloud(cdo! {
         let _jobs = local(option("jobs", "manage jobs"));
         let _exec = local(option1("exec", "execute jobs for this node"));
-        cor(local(start_jobs()), cor(local(comm_jobs()), ping_nodes()))
+        local(start_jobs()) | local(comm_jobs()) | ping_nodes()
     })
 }
 
@@ -165,7 +165,8 @@ fn launch_jobs_for_node(node: &Node) -> Trans<()> {
 
 /// `(abduce >> x >> empty) <|> return ()` logged: runs `x` aside and goes on (`forkCloud`)
 pub fn fork_cloud(x: Cloud<()>) -> Cloud<()> {
-    cor(cdo! { [x] local(abduce()); x; cempty::<()>() }, cpure(()))
+    let aside = cdo! { [x] local(abduce()); x; cempty::<()>() };
+    aside | cpure(())
 }
 
 // ---------------------------------------------------------------------------------------------------------------

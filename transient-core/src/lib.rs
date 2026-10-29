@@ -713,7 +713,7 @@ where
             ctx.log.hash = h_end;
             None
         });
-        let result = or(or(fparallel, xparallel), cleanup);
+        let result = fparallel | xparallel | cleanup;
         // the flag goes back to what it was, in the thread that has the result
         let result = tdo! {
             let c = result.map(Taken::new);
