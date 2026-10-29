@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hello web</title>
+<style>
+  body { font-family: sans-serif; max-width: 32em; margin: 3em auto; padding: 0 1em; }
+  #log p { margin: .3em 0; }
+  .me { color: #555; }
+  .result { font-weight: bold; margin-top: 1em; }
+  form { display: flex; gap: .5em; margin-top: 1em; }
+  input { flex: 1; padding: .4em; }
+</style>
+</head>
+<body>
+<h1>Hello web</h1>
+<div id="log"></div>
+<form id="form" hidden>
+  <input id="value" autocomplete="off" autofocus>
+  <button>Send</button>
+</form>
+
+<script>
+// A page for the endpoints of a program that uses `minput`. Every response says what to call next (`req.requrl`, with a
+// `$type` where the value goes), so this code does not know the program: it shows the message, asks for the value, and
+// follows the link. The last response has no `req`: it is the result.
+
+const log = document.getElementById('log');
+const form = document.getElementById('form');
+const field = document.getElementById('value');
+
+function say(text, cls) {
+  const p = document.createElement('p');
+  p.textContent = text;
+  if (cls) p.className = cls;
+  log.appendChild(p);
+}
+
+// The response of an endpoint is chunked and stays open: read it until the first JSON message is complete.
+async function call(path) {
+  const response = await fetch(path);
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    text += decoder.decode(value, { stream: true });
+    try {
+      const message = JSON.parse(text);
+      reader.cancel();
+      return message;
+    } catch (e) { /* the message is not complete yet */ }
+  }
+  return JSON.parse(text);
+}
+
+function ask() {
+  form.hidden = false;
+  field.value = '';
+  field.focus();
+  return new Promise(resolve => {
+    form.onsubmit = event => {
+      event.preventDefault();
+      form.hidden = true;
+      resolve(field.value);
+    };
+  });
+}
+
+async function run() {
+  // the first call creates the session of this browser (the cookie `state`)
+  let step = await call('/start/u');
+  while (step.req) {
+    say(step.msg);
+    const value = await ask();
+    say(value, 'me');
+    // the link has a `$string` where the value goes; only the path is used, so it works from any host name
+    const path = new URL(step.req.requrl).pathname.replace(/\$[a-z]+/, encodeURIComponent(value));
+    step = await call(path);
+  }
+  say(step.fullname || JSON.stringify(step), 'result');
+}
+
+run().catch(error => say('Error: ' + error, 'result'));
+</script>
+</body>
+</html>

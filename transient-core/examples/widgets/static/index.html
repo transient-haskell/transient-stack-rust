@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Widgets</title>
+<style>
+  body { font-family: sans-serif; max-width: 34em; margin: 2em auto; padding: 0 1em; }
+  section { margin: 1.4em 0; }
+  label { margin-right: .8em; }
+  output { font-weight: bold; margin-left: .5em; }
+  input[type=text], input[type=number] { padding: .3em; }
+</style>
+</head>
+<body>
+<p>Different input elements:</p>
+
+<section id="person">
+  <input type="text" id="name" placeholder="Enter the name">
+  <input type="number" id="age" placeholder="Enter the age (Int)">
+  <button id="send">send</button>
+  <p>input boxes returned: <output></output></p>
+</section>
+
+<section id="radio">
+  <label><input type="radio" name="r" value="red">red</label>
+  <label><input type="radio" name="r" value="green">green</label>
+  <label><input type="radio" name="r" value="blue">blue</label>
+  returns: <output></output>
+</section>
+
+<section id="checks">
+  <label><input type="checkbox" value="Red"><b>red</b></label>
+  <label><input type="checkbox" value="Green" checked><b>green</b></label>
+  <label><input type="checkbox" value="blue"><b>blue</b></label>
+  returns: <output></output>
+</section>
+
+<section id="select">
+  <select>
+    <option value="" selected disabled>choose</option>
+    <option>red</option><option>green</option><option>blue</option>
+  </select>
+  returns: <output></output>
+</section>
+
+<section id="link">
+  <a href="#" id="hi">Hi!</a> returns: <output></output>
+</section>
+
+<script>
+// Every widget calls the endpoint of the program that is its own (`widgets.rs`) when something happens in it, and writes the
+// answer in its own `output`: an event in one widget does not touch the others.
+//
+// The response of an endpoint is chunked and stays open: it is read until the first JSON message is complete.
+async function call(path) {
+  const response = await fetch(path, { signal: AbortSignal.timeout(5000) });
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    text += decoder.decode(value, { stream: true });
+    try {
+      const message = JSON.parse(text);
+      reader.cancel();
+      return message;
+    } catch (e) { /* not complete yet */ }
+  }
+  return JSON.parse(text);
+}
+
+const out = id => document.querySelector('#' + id + ' output');
+const enc = encodeURIComponent;
+
+// Writes in the `output` of the widget what `f` gives, or the error: a call that fails must not stay silent.
+async function show(id, f) {
+  out(id).textContent = '...';
+  try {
+    out(id).textContent = await f();
+  } catch (error) {
+    out(id).textContent = 'error: ' + error;
+    console.error(id, error);
+  }
+}
+
+document.getElementById('send').onclick = () => show('person', async () => {
+  const name = document.getElementById('name').value, age = document.getElementById('age').value;
+  const p = await call('/person/' + enc(name) + '/' + enc(age));
+  return 'Person {name = ' + JSON.stringify(p.name) + ', age = ' + p.age + '}';
+});
+
+document.querySelectorAll('#radio input').forEach(r => r.onchange = () => show('radio', async () => (await call('/radio/' + enc(r.value))).radio));
+
+const boxes = document.querySelectorAll('#checks input');
+boxes.forEach(b => b.onchange = () => show('checks', async () => {
+  const checked = [...boxes].filter(x => x.checked).map(x => x.value);
+  return JSON.stringify((await call('/checks/' + enc(JSON.stringify(checked)))).checks);
+}));
+
+document.querySelector('#select select').onchange = event => show('select', async () => (await call('/select/' + enc(event.target.value))).select);
+
+document.getElementById('hi').onclick = event => {
+  event.preventDefault();
+  show('link', async () => (await call('/hi/u')).hi);
+};
+</script>
+</body>
+</html>

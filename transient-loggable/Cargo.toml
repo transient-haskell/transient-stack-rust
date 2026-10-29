@@ -1,0 +1,9 @@
+[package]
+name = "transient-loggable"
+version = "0.1.0"
+edition = "2021"
+description = "Format of the values of the Transient log: atoms in the Haskell format and JSON for the rest"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
