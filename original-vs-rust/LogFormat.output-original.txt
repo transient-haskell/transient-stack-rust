@@ -1,0 +1,6 @@
+LOG: 42/"hello//world \"x\""/3.5/t/u/[1,2,3]/Just 7/Red/P {name = "ana", age = 30}/["a","b//c"]/1.0e-2/-5/'x'/
+HASH: 148057647
+SHOW NodeMSG: ClosureData (ClosureId "c1") (SessionId "s1") (ClosureId "c2") (SessionId "s2") [Fragment {unFragment = "e/42/u/"}]
+SERIALIZE NodeMSG: c1/s1/c2/s2/["e//42//u//"]
+SHOW Fragment: Fragment {unFragment = "e/\"q\"/"}
+1

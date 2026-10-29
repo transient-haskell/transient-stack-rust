@@ -1,0 +1,5 @@
+hash of the path after 'node <- local getMyNode': 30847
+== cierre 29644030-0
+("29644030","0",DBRef "0-0",Fragment {unFragment = "e/w/(\"localhost\",8125,[])/1/e/"},Nothing)
+== cierre 570625483-0
+("570625483","0",DBRef "29644030-0",Fragment {unFragment = "u/10/"},Nothing)

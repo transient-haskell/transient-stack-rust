@@ -1,0 +1,51 @@
+--- E1 doc: hello world, the last one with lastWriteEVar
+hello
+world
+   keep' returns 2 results
+--- E1b without lastWriteEVar the reader stays alive
+hello
+world
+   (keep' does not finish: listeners remain)
+--- E2 order of the readers (LIFO) and synchronous write
+B x
+A x
+written
+   keep' returns 2 results
+--- E3 readEVar1: a single value
+one 1
+written
+   keep' returns 1 results
+--- E4 delReadEVar inside the reader
+read 1
+written
+   keep' returns 1 results
+--- E5 a reader that does abduce: the writer does not wait
+written
+slow 1
+   keep' returns 1 results
+--- M1 mailbox: put and get by type, deleteMailbox on seeing 3
+got 1
+got 2
+got 3
+   keep' returns 3 results
+--- M2 different mailboxes by type and by key
+int 1
+string s
+key a 10
+key b 20
+   keep' returns 4 results
+--- M3 lastPutMailbox terminates the readers
+got 1
+got 2
+   keep' returns 2 results
+--- M4 a put without readers is lost (there is no queue)
+put 1 without reader
+got 2
+   keep' returns 1 results
+--- M5 two readers of the same mailbox: LIFO
+B 1
+A 1
+   keep' returns 2 results
+--- M6 getEVarFromMailbox + writeEVar direct
+got 5
+   keep' returns 1 results

@@ -1,0 +1,64 @@
+-- String: what is written
+  "" => "\"\""
+  "[]" => "\"[]\""
+  "hello" => "\"hello\""
+  "a/b" => "\"a//b\""
+  "a//b" => "\"a////b\""
+  "a\"b" => "\"a\\\"b\""
+  "a\nb" => "\"a\\nb\""
+  "nandu \241 \8364" => "\"nandu \195\177 \226\130\172\""
+  "a b" => "\"a b\""
+  "x:y;z" => "\"x:y;z\""
+-- Text: what is written
+  "" => "\"\""
+  "hello" => "\"hello\""
+  "a/b" => "\"a//b\""
+  "nandu \241 \8364" => "\"nandu \195\177 \226\130\172\""
+-- Char
+  'a' => "'a'"
+  '/' => "'\\47'"
+  '\n' => "'\\n'"
+  '\233' => "'\\233'"
+-- lists
+  [String]: "[\"a\",\"b//c\",\"\",\"d\\\"e\"]"
+  [Int]:    [1,2,3]
+  [] :: [Int]:    []
+-- round trip
+ok    String  "\"\""
+ok    String  "\"[]\""
+ok    String  "\"hello\""
+ok    String  "\"a//b\""
+ok    String  "\"a////b\""
+ok    String  "\"a//\""
+ok    String  "\"//a\""
+ok    String  "\"//////\""
+ok    String  "\"a\\\"b\""
+ok    String  "\"a\\\\b\""
+ok    String  "\"a\\nb\\tc\""
+ok    String  "\"nandu \195\177 \226\130\172\""
+ok    String  "\"\240\157\132\158\""
+ok    String  "\"a b\""
+ok    String  "\"x:y;z\""
+ok    Text  "\"\""
+ok    Text  "\"hello\""
+ok    Text  "\"a//b\""
+ok    Text  "\"nandu \195\177 \226\130\172\""
+ok    Text  "\"\240\157\132\158\""
+ok    Char  "'a'"
+ok    Char  "'\\47'"
+ok    Char  "'\\n'"
+ok    Char  "'\\''"
+ok    Char  "'\\\\'"
+ok    Char  "'\\233'"
+ok    Char  "'\\8364'"
+ok    Char  "'\"'"
+ok    [String]  "[\"a\",\"b//c\",\"\",\"d\\\"e\"]"
+ok    [Int]  "[1,2,3]"
+ok    [[String]]  "[[\"a\"],[\"b//c\",\"\"]]"
+-- reading of the old (raw) format: console and URLs
+  Just ("hello/world","/rest")
+  Just ("a b","/rest")
+  Just ("hello","/rest")
+-- reading of JSON escapes
+  Just ("a\233\n\119070","/x")
+  lone surrogate: Just ("\"mal\\ud834\"","/x")

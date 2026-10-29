@@ -1,4 +1,4 @@
-//! Golden tests: what the original in Haskell writes (`transient/tests/original-vs-rust/LogFormat*.hs`) for the
+//! Golden tests: what the original in Haskell writes (`original-vs-rust/LogFormat*.hs`) for the
 //! atoms, and the reads it does. Strings follow the new rule (JSON), not the original's (see `lib.rs`).
 
 use serde::{Deserialize, Serialize};

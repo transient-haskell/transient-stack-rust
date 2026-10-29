@@ -214,7 +214,7 @@ pub fn finish(reason: &str) -> Trans<()> {
 /// open a new thread or wait for the listeners to be removed.
 ///
 /// (Haskell's did not do this: its `noactiveth` check always gave `True` and it ran when the first thread ended. It was
-/// fixed in the same session; see `transient/tests/original-vs-rust/README.md`.)
+/// fixed in the same session; see `original-vs-rust/README.md`.)
 pub fn on_wait_threads(f: impl Fn(&str) -> Trans<()> + Send + Sync + 'static) -> Trans<()> {
     let f = Arc::new(f);
     Trans::new(move |ctx| {

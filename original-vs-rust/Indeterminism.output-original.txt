@@ -1,0 +1,88 @@
+--- F1 for: the continuation runs in this thread, in order
+for 1
+for 2
+for 3
+   keep' returns 3 results
+--- F2 for <|> something else: the alternative runs after the loop
+a 1
+a 2
+alternative
+   keep' returns 3 results
+--- F3 for with an asynchronous task inside: the loop continues
+after async 3
+after async 2
+after async 1
+   keep' returns 3 results
+--- C1 choose: one thread per element
+choose 1
+choose 2
+choose 3
+   keep' returns 3 results
+--- C2 choose with threads 1: one at a time
+choose1 1
+choose1 2
+choose1 3
+   keep' returns 3 results
+--- G1 group 2 de 5 eventos
+group [2,1]
+group [4,3]
+   keep' returns 2 results
+--- G2 group with a single thread in order (for)
+group [3,2,1]
+group [6,5,4]
+   keep' returns 2 results
+--- S1 sync: waits for all the threads and gives the list
+sync 3
+   keep' returns 1 results
+--- S2 sync of a computation without results: runs the alternative
+alternative
+   keep' returns 1 results
+--- S3 sync1: the first result
+sync1 1
+   keep' returns 1 results
+--- S4 timeout: arrives in time
+timeout ok 1
+   keep' returns 1 results
+--- S5 timeout: not reached
+timeout expired
+   keep' returns 1 results
+--- O1 oneThread with a stream
+   (keep' returned nothing in 3 s)
+--- B1 burst: SMore per result and SDone on going silent
+burst SMore 1
+burst SDone
+ThreadId 251:  exit of type not expected. (expected, sent)= ([()], ()
+CallStack (from HasCallStack):
+  error, called at src/Transient/Core.hs:1834:33 in transient-0.9.0.2-inplace:Transient.Core
+   (keep' returned nothing in 3 s)
+--- T1 groupByTime: groups what is received per interval
+batch [1,2,3]
+batch [4,5,6]
+batch [7,8,9]
+batch [10,11,12,13]
+batch [14,15,16]
+batch [17,18,19]
+batch [20,21,22]
+batch [23,24,25,26]
+batch [27,28,29]
+batch [30,31,32]
+batch [33,34,35,36]
+batch [37,38,39]
+batch [40,41,42]
+batch [43,44,45]
+batch [46,47,48,49]
+batch [50,51,52]
+batch [53,54,55]
+batch [56,57,58,59]
+batch [60,61,62]
+batch [63,64,65]
+batch [66,67,68]
+batch [69,70,71,72]
+batch [73,74,75]
+batch [76,77,78]
+batch [79,80,81,82]
+batch [83,84,85]
+batch [86,87,88]
+batch [89,90,91]
+batch [92,93,94,95]
+   (keep' returned nothing in 3 s)

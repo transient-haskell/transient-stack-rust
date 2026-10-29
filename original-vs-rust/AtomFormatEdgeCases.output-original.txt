@@ -1,0 +1,11 @@
+-- reading of edge cases
+  read "[]/x" => Just ("[]","/x")
+  read "'\\233'/y" => Just ('\233',"/y")
+  read "'\\n'/y" => Just ('\n',"/y")
+  read "'/'/y" => Nothing
+  read "'\\47'/y" => Just ('/',"/y")
+  read "a/b" => Just ("a","/b")
+  read "[1,2,3]/x" => Just ([1,2,3],"/x")
+  read "[\"a\",\"b//c\"]/x" => Just (["a","b//c"],"/x")
+-- a String that is literally []
+String "[]" => "[]"

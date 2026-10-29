@@ -1,0 +1,87 @@
+-- numbers
+int  "12abc" => Just (12,"abc")
+int  "-5" => Just (-5,"")
+int  "+7" => Just (7,"")
+int  " 3" => Nothing
+int  "" => Nothing
+int  "abc" => Nothing
+int  "007" => Just (7,"")
+integer  "123456789012345678901234567890x" => Just (123456789012345678901234567890,"x")
+integer  "-9" => Just (-9,"")
+hex  "ff" => Just (255,"")
+hex  "FFz" => Just (255,"z")
+hex  "g" => Nothing
+hex  "0x1" => Just (0,"x1")
+hex  "1A2b rest" => Just (6699," rest")
+double  "3.5" => Just (3.5,"")
+double  "-3.5" => Just (-3.5,"")
+double  "-0.5" => Just (0.5,"")
+double  "1e2" => EXCEPCION Negative exponent
+double  "1.5e2" => EXCEPCION Negative exponent
+double  "2E1" => Just (20.0,"")
+double  "7" => Just (7.0,"")
+double  "1e-2" => EXCEPCION Negative exponent
+double  "0.25x" => Just (0.25,"x")
+double  "3." => EXCEPCION Maybe.fromJust: Nothing
+double  ".5" => Nothing
+double  "abc" => Nothing
+-- atomicity
+string  "abc" => Just ("ab","c")
+string  "ac" => Nothing
+string  "a" => Nothing
+string|string  "acd" => Just ("ac","d")
+tChar  "abc" => Just ('a',"bc")
+tChar  "xbc" => Nothing
+anyChar  "xyz" => Just ('x',"yz")
+anyChar  "" => Nothing
+composite without try  "ac" => Nothing
+composite with try  "ac" => Just ('a',"c")
+-- take / skip
+tTakeWhile  "123abc" => Just ("123","abc")
+tTakeWhile empty  "abc" => Just ("","abc")
+tTakeWhile'  "123;abc" => Just ("123","abc")
+tTake  "abcd" => Just ("ab","cd")
+tTake  "ab" => Just ("ab","")
+tDrop  "abcd" => Just ("cd","")
+tTakeUntil  "ab::cd" => Just ("ab","::cd")
+tTakeUntil no end  "abcd" => Just ("abcd","")
+tDropUntil  "ab::cd" => Just ("::cd","")
+tTakeUntilToken  "ab::cd" => Just ("ab","cd")
+tTakeUntilToken no token  "abcd" => Nothing
+tDropUntilToken  "ab::cd" => Just ("cd","")
+dropSpaces  "  \t\n x" => Just ("x","")
+dropTillEndOfLine  "ab\ncd" => Just ("\ncd","")
+parseString  "  hello world" => Just ("hello"," world")
+parseString empty  "   " => Just ("","")
+tPutStr  "ab" => Just ("XYab","")
+isDone  "" => Just (True,"")
+isDone no  "a" => Just (False,"a")
+-- combinators
+manyTill  "abc;def" => Just ("abc","def")
+manyTill empty  ";x" => Just ("","x")
+manyTill no end  "abc" => Nothing
+sepBy  "1,2,3x" => Just ([1,2,3],"x")
+sepBy empty  "x" => Just ([],"x")
+sepBy tail  "1,2," => Just ([1,2],",")
+commaSep  "4,5" => Just ([4,5],"")
+semiSep  "4;5" => Just ([4,5],"")
+parens  "(12)x" => Just (12,"x")
+parens malformed  "(12x" => Nothing
+braces  "{1}" => Just (1,"")
+brackets  "[1]" => Just (1,"")
+angles  "<1>" => Just (1,"")
+between  "[7]" => Just (7,"")
+applicativo  "3,4rest" => Just ((3,4),"rest")
+applicative fails  "3;4" => Nothing
+chainMany  "aaab" => Just ("aaa","b")
+-- streams by chunks
+int split  ["12","34","ab"] => Just (1234,"ab")
+string split  ["a","b","cd"] => Just ("abc","d")
+tTakeWhile split  ["1","23","4x","5"] => Just ("1234","x5")
+one byte per chunk  ["1","2",",","3","4"] => Just ((12,34),"")
+tTakeUntilToken split  ["ab:",":cd"] => Just ("ab","cd")
+SLast  ["12"] => Just (12,"")
+flujo empty  [] => Just (True,"")
+double split  ["3",".","25"] => Just (3.25,"")
+-- withParseString restores
+Just ("den","fu")

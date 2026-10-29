@@ -1,0 +1,9 @@
+--- O4 oneThread: tasks shorter than the interval: all finish
+  process 1
+  process 2
+  process 3
+  process 4
+   (keep' returned nothing in 3 s)
+--- O5 oneThread over option (react): no producer of its own
+Enter	[1;31mgo[0m		to: go
+   (keep' returned nothing in 3 s)

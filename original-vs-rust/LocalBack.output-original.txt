@@ -1,0 +1,7 @@
+--- B5b those inside localBack disappear on leaving
+outer
+   keep' returns 0 results
+--- B5c localBack and backtracking with abduce inside
+inner
+outer
+   keep' returns 0 results

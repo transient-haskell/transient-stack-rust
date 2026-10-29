@@ -1,0 +1,30 @@
+--- O2 oneThread: does the producer keep generating events?
+  produce 1
+  event 1
+  process 1
+   (keep' returned nothing in 3 s)
+--- O3 without oneThread: the same, for comparison
+  produce 1
+  event 1
+  produce 2
+  event 2
+  produce 3
+  event 3
+  process 1
+  produce 4
+  event 4
+  process 2
+  produce 5
+  process 3
+  produce 6
+  process 4
+  produce 7
+  produce 8
+  produce 9
+  produce 10
+  produce 11
+  produce 12
+  produce 13
+  produce 14
+  produce 15
+  produce 16

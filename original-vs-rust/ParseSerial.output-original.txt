@@ -1,0 +1,4 @@
+serial: the first fails, the second does not start  "ab" => Just (('-','a'),"")
+serial: both  "abc" => Just (('a','b'),"c")
+serial: the second fails after the first consumed  "ab" => Just (('-','b'),"")
+mode  "x" => Just ("Serial","x")

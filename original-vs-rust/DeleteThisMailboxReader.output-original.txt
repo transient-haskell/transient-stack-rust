@@ -1,0 +1,5 @@
+--- M7 deleteThisMailboxReader leaves the other readers
+B 1
+A 1
+A 2
+   keep' returns 3 results

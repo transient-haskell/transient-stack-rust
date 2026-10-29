@@ -1,0 +1,27 @@
+--- O4 <**: an event of mb runs ma again
+  ma executed 1
+  r 1
+  ma executed 2
+  r 2
+  ma executed 3
+  r 3
+   keep' returns 0 results
+--- T1c addThreads ANTES de lanzar: pico de concurrencia
+x 1 pico 3
+x 2 pico 3
+x 3 pico 3
+x 4 pico 3
+   keep' returns 4 results
+--- T1d addThreads 2 with limit 3: does not lower the limit
+x 1 pico 3
+x 2 pico 3
+x 3 pico 3
+x 4 pico 3
+x 5 pico 3
+   keep' returns 5 results
+--- T4 onWaitThreads: when the threads are stopped waiting for events
+work 1
+work 2
+work 3
+  WAITTHREADS
+   keep' returns 3 results

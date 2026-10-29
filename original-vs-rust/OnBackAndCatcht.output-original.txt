@@ -1,0 +1,61 @@
+--- B1 undo: handlers in reverse order
+a
+b
+undo b
+undo a
+   keep' returns 0 results
+--- B2 retry resumes from the registration point
+start
+undo
+done
+   keep' returns 1 results
+--- B3 the handlers are inherited by later threads
+undo
+   keep' returns 0 results
+--- B4 a handler that stops cuts the backtracking
+a
+b
+undo b
+   keep' returns 0 results
+--- B5 localBack hides the handlers outside
+inner
+outer
+   keep' returns 0 results
+--- B6 razon tipada
+reason 42
+   keep' returns 0 results
+--- B7 several threads do back: the handler stays registered for all
+handler thread1
+handler thread2
+handler thread3
+   keep' returns 0 results
+--- B8 the same thread does back twice after retry
+k=1
+undo
+k=2
+undo
+k=3
+end
+   keep' returns 1 results
+--- B9 backCut deletes the handlers
+new
+   keep' returns 0 results
+--- B10 back without handlers
+before
+   keep' returns 0 results
+--- B11 the handler returns a value with which the flow continues (forward)
+normal
+from the handler
+   keep' returns 1 results
+--- X6c catcht: exception in the first argument, not at the beginning
+inside
+recovered x
+   keep' returns 1 results
+--- X6d catcht: exception AFTER the first argument
+mx
+ThreadId 59: after
+   (keep' does not finish)
+--- X6e catcht with throwt inside the first argument
+inside
+recovered t
+   keep' returns 1 results

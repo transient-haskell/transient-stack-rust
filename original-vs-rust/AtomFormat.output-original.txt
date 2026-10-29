@@ -1,0 +1,70 @@
+-- integers
+Int 0 => "0"
+Int -5 => "-5"
+Int max => "9223372036854775807"
+Integer grande => "123456789012345678901234567890"
+-- Double
+0.1 => "0.1"
+1.0 => "1.0"
+100.0 => "100.0"
+0.01 => "1.0e-2"
+1e7 => "1.0e7"
+9999999.0 => "9999999.0"
+123456.789 => "123456.789"
+1.5e10 => "1.5e10"
+1e-3 => "1.0e-3"
+-2.5 => "-2.5"
+0.0 => "0.0"
+-0.0 => "-0.0"
+NaN => "NaN"
+Infinity => "Infinity"
+-Infinity => "-Infinity"
+5e-324 => "5.0e-324"
+3.14159 => "3.14159"
+0.1+0.2 => "0.30000000000000004"
+-- Float
+3.14 => "3.14"
+1e-2 => "1.0e-2"
+16777216 => "1.6777216e7"
+-- Bool, unit, Char
+True => "t"
+False => "f"
+() => "u"
+'a' => "'a'"
+'\n' => "'\\n'"
+'\'' => "'\\''"
+'\\' => "'\\\\'"
+'/' => "'/'"
+'e acute' => "'\\233'"
+'euro' => "'\\8364'"
+'"' => "'\"'"
+-- String ([Char])
+empty => "[]"
+hello => "hello"
+with slash => "a//b"
+double slashes => "a////b"
+quotes => "a\"b"
+space => "a b"
+unicode => "\241and\250"
+euro => "\172"
+newline => "a\nb"
+ends in slash => "a//"
+-- Text
+hello => "hello"
+with slash => "a/b"
+unicode => "\195\177and\195\186"
+euro => "\226\130\172"
+-- ByteString
+bs with slash => "a//b"
+-- reading
+  read "42/resto" => Just (42,"/resto")
+  read "-5/x" => Just (-5,"/x")
+  read "3.5/x" => Just (3.5,"/x")
+  read "3/x" => Just (3.0,"/x")
+  read "1.0e-2/x" => Just (1.0e-2,"/x")
+  read "t/x" => Just (True,"/x")
+  read "u/x" => Just ((),"/x")
+  read "'x'/y" => Just ('x',"/y")
+  read "hello//world/rest" => Just ("hello/world","/rest")
+  read "a b/resto" => Just ("a b","/resto")
+  read "/x" => Nothing

@@ -9,7 +9,7 @@
 //!   (`//`) so that it is not mistaken for the separator. A single `/` closes the value. No Haskell `show`.
 //!
 //! Two points where this departs from what the original writes today (which has bugs, see the README of
-//! `transient/tests/original-vs-rust`): strings are JSON (the original writes truncated Latin-1, does not double
+//! `original-vs-rust`): strings are JSON (the original writes truncated Latin-1, does not double
 //! slashes in `Text` and does not tell the empty string from `"[]"`), and the character `/` is written `'\47'` (the original
 //! writes `'/'`, which it can not read back itself).
 

@@ -1,0 +1,75 @@
+--- X1 one onException; the exception in the code below
+before
+caught boom
+ThreadId 7: boom
+   keep' returns 0 results
+--- X2 several threads throw: the handler fires for each one
+ok 1
+caught 2
+ThreadId 13: 2
+caught 3
+ThreadId 14: 3
+   keep' returns 1 results
+--- X3 the filter by type: ErrorCall does not catch ArithException
+Arith divide by zero
+ThreadId 18: divide by zero
+   keep' returns 0 results
+--- X4 LIFO order of two handlers of the same type
+second registered
+first registered
+ThreadId 22: x
+   keep' returns 0 results
+--- X5 continue: resumes forward from the registration point
+k=1
+handler
+k=2
+end
+   keep' returns 1 results
+--- X6 catcht: the exception is in the first argument and the handler's value continues
+recovered in mx
+   keep' returns 1 results
+--- X6b catcht without exception
+normal
+   keep' returns 1 results
+--- X7 throwt keeps the state; throwIO does not
+state: Just "changed"
+ThreadId 38: t
+   keep' returns 0 results
+--- X7b with throwIO
+state: Just "initial"
+ThreadId 42: io
+   keep' returns 0 results
+--- X8 exception in a thread launched after the onException
+caught in thread
+ThreadId 47: in thread
+   (keep' does not finish)
+--- X9 no handler: keep' prints it
+ThreadId 51: no handler
+   keep' returns 0 results
+--- X10 an onException registered AFTER the exception does not fire
+a
+before
+ThreadId 55: x
+   keep' returns 0 results
+--- X11 localExceptions: the handlers inside are not valid outside
+outside
+ThreadId 59: x
+   keep' returns 0 results
+--- X12 cutExceptions
+new
+   keep' returns 0 results
+--- X13 a handler that stops (empty) cuts the chain
+second and stop
+   keep' returns 0 results
+--- X14 SomeException atrapa todo
+any: divide by zero
+ThreadId 71: divide by zero
+   keep' returns 0 results
+--- X15 error puro (error)
+caught pure
+CallStack (from HasCallStack):
+  error, called at transient/tests/original-vs-rust/Exceptions.hs:122:29 in main:Main
+ThreadId 75: pure
+CallStack (from HasCallStack):
+  error, called at transient/tests/original-vs-rust/Exceptions.hs:122:29 in main:Main
+   (keep' does not finish)

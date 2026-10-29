@@ -1,0 +1,14 @@
+--- 1: one registration, three threads in parallel
+work 1
+work 2
+work 3
+FINISH
+[(),(),()]
+--- 2: the onFinish statement runs for each result
+work 1
+FINISH 1
+work 2
+FINISH 2
+work 3
+FINISH 3
+[(),(),()]

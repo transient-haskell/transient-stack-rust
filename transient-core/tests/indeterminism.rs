@@ -189,7 +189,7 @@ fn t1_group_by_time_groups_what_arrives_in_each_interval() {
 }
 
 // ---- one_thread. Haskell's `oneThread` was fixed so that they match (see the README of
-// transient/tests/original-vs-rust): before it killed the producer of a `waitEvents` stream and cancelled nothing with `option`.
+// original-vs-rust): before it killed the producer of a `waitEvents` stream and cancelled nothing with `option`.
 //
 // Events every 20 ms and a 50 ms task per event: each task is cancelled by the next event, the producer goes on.
 #[test]
