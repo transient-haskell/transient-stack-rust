@@ -168,7 +168,7 @@ fn send_and_leave(ctx: &mut Ctx, conn: &Connection, log: &Log) -> Option<()> {
     let (recover, calling) = (log.recover, conn.calling);
     let leave = tdo! {
         abduce();
-        empty::<()>()
+        empty()
     };
     let r = or(leave, Trans::new(move |ctx| {
         if recover || !calling {

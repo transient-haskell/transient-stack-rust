@@ -71,7 +71,7 @@ fn e2_readers_are_called_last_in_first_and_write_is_synchronous() {
         lift_io({ let ev = ev.clone(); move || ev.write("x".to_string()) });
         say(&log, "escrito");
         lift_io({ let ev = ev.clone(); move || ev.clean() });
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(a | b | c), Some(2));
     // both readers finish before `write` returns
@@ -85,7 +85,7 @@ fn e3_read_evar1_reads_a_single_value() {
     let b = tdo! { [log, ev]
         lift_io({ let ev = ev.clone(); move || { ev.write(1); ev.write(2) } });
         say(&log, "escritos");
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(a | b), Some(1));
     assert_eq!(lines(&log), ["uno 1", "escritos"]);
@@ -98,7 +98,7 @@ fn e4_del_read_evar_inside_the_reader() {
     let b = tdo! { [log, ev]
         lift_io({ let ev = ev.clone(); move || { ev.write(1); ev.write(2) } });
         say(&log, "escritos");
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(a | b), Some(1));
     assert_eq!(lines(&log), ["leido 1", "escritos"]);
@@ -117,7 +117,7 @@ fn e5_a_reader_that_goes_on_in_its_own_thread_does_not_hold_the_writer() {
     let b = tdo! { [log, ev]
         lift_io({ let ev = ev.clone(); move || ev.write(1) });
         say(&log, "escrito");
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(a | b), Some(1));
     assert_eq!(lines(&log), ["escrito", "lento 1"]);
@@ -136,7 +136,7 @@ fn m1_put_and_get_by_type_and_delete_mailbox() {
         say(&log, format!("got {}", x.0));
         if x.0 == 3 { lift_io(|| delete_mailbox::<N1>()) } else { pure(()) }
     };
-    let writer = tdo! { lift_io(|| (1..=3).for_each(|i| put_mailbox(N1(i)))); empty::<()>() };
+    let writer = tdo! { lift_io(|| (1..=3).for_each(|i| put_mailbox(N1(i)))); empty() };
     assert_eq!(ends(reader | writer), Some(3));
     assert_eq!(lines(&log), ["got 1", "got 2", "got 3"]);
 }
@@ -160,7 +160,7 @@ fn m2_mailboxes_are_distinguished_by_type_and_by_key() {
             put_mailbox_key("a", M2Int(10));
             put_mailbox_key("b", M2Int(20));
         });
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(r1 | r2 | r3 | r4 | w), Some(4));
     assert_eq!(lines(&log), ["int 1", "string s", "clave a 10", "clave b 20"]);
@@ -173,7 +173,7 @@ struct M3(i32);
 fn m3_last_put_mailbox_ends_the_readers() {
     let log = Log::default();
     let reader = tdo! { [log] let x = get_mailbox::<M3>(); say(&log, format!("got {}", x.0)) };
-    let writer = tdo! { lift_io(|| { put_mailbox(M3(1)); last_put_mailbox(M3(2)) }); empty::<()>() };
+    let writer = tdo! { lift_io(|| { put_mailbox(M3(1)); last_put_mailbox(M3(2)) }); empty() };
     assert_eq!(ends(reader | writer), Some(2));
     assert_eq!(lines(&log), ["got 1", "got 2"]);
 }
@@ -184,14 +184,14 @@ struct M4(i32);
 #[test]
 fn m4_a_put_without_readers_is_lost() {
     let log = Log::default();
-    let lost = tdo! { [log] lift_io(|| put_mailbox(M4(1))); say(&log, "put 1 sin lector"); empty::<()>() };
+    let lost = tdo! { [log] lift_io(|| put_mailbox(M4(1))); say(&log, "put 1 sin lector"); empty() };
     let reader = tdo! { [log]
         lift_io(|| sleep(ms(50)));
         let x = get_mailbox::<M4>();
         say(&log, format!("got {}", x.0));
         lift_io(|| delete_mailbox::<M4>())
     };
-    let late = tdo! { lift_io(|| sleep(ms(100))); lift_io(|| put_mailbox(M4(2))); empty::<()>() };
+    let late = tdo! { lift_io(|| sleep(ms(100))); lift_io(|| put_mailbox(M4(2))); empty() };
     assert_eq!(ends(lost | reader | late), Some(1));
     assert_eq!(lines(&log), ["put 1 sin lector", "got 2"]);
 }
@@ -204,7 +204,7 @@ fn m5_two_readers_of_a_mailbox_are_called_last_in_first() {
     let log = Log::default();
     let a = tdo! { [log] let x = get_mailbox::<M5>(); say(&log, format!("A {}", x.0)) };
     let b = tdo! { [log] let x = get_mailbox::<M5>(); say(&log, format!("B {}", x.0)) };
-    let w = tdo! { lift_io(|| last_put_mailbox(M5(1))); empty::<()>() };
+    let w = tdo! { lift_io(|| last_put_mailbox(M5(1))); empty() };
     assert_eq!(ends(a | b | w), Some(2));
     assert_eq!(lines(&log), ["B 1", "A 1"]);
 }
@@ -216,7 +216,7 @@ struct M6(i32);
 fn m6_write_directly_to_the_evar_of_a_mailbox() {
     let log = Log::default();
     let reader = tdo! { [log] let x = get_mailbox::<M6>(); say(&log, format!("got {}", x.0)); lift_io(|| delete_mailbox::<M6>()) };
-    let writer = tdo! { lift_io(|| get_evar_from_mailbox::<M6>().write(M6(5))); empty::<()>() };
+    let writer = tdo! { lift_io(|| get_evar_from_mailbox::<M6>().write(M6(5))); empty() };
     assert_eq!(ends(reader | writer), Some(1));
     assert_eq!(lines(&log), ["got 5"]);
 }
@@ -252,7 +252,7 @@ fn delete_this_mailbox_reader_leaves_the_other_readers() {
     let b = tdo! { [log] let x = get_mailbox::<M8>(); say(&log, format!("B {}", x.0)); delete_this_mailbox_reader::<M8>() };
     let w = tdo! {
         lift_io(|| { put_mailbox(M8(1)); put_mailbox(M8(2)); delete_mailbox::<M8>() });
-        empty::<()>()
+        empty()
     };
     assert_eq!(ends(a | b | w), Some(3));
     // B is removed after the first one; A keeps reading

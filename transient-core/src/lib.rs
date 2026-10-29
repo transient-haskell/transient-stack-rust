@@ -541,7 +541,7 @@ pub fn fork(p: Trans<()>) -> Trans<()> {
         [p]
         abduce();
         p;
-        empty::<()>()
+        empty()
     };
     or(branch, pure(()))
 }

@@ -67,7 +67,7 @@ fn s3_try_restores_on_failure_and_sandbox_always() {
     let log = Log::default();
     let t = tdo! { [log]
         set_data("base".to_string());
-        try_(tdo! { set_data("cambiado".to_string()); empty::<()>() }) | pure(());
+        try_(tdo! { set_data("cambiado".to_string()); empty() }) | pure(());
         let a = get_sdata::<String>();
         sandbox(set_data("dentro".to_string()));
         let b = get_sdata::<String>();
@@ -206,7 +206,7 @@ fn o4_at_end_again_runs_ma_again_for_each_event_of_mb() {
     let writer = tdo! { [ev]
         lift_io(|| sleep(ms(20)));
         lift_io({ let ev = ev.clone(); move || { ev.write(()); ev.write(()); ev.clean() } });
-        empty::<()>()
+        empty()
     };
     assert_eq!(keep_all(first | writer).len(), 0);
     assert_eq!(lines(&log), ["ma ejecutado 1", "r 1", "ma ejecutado 2", "r 2", "ma ejecutado 3", "r 3"]);

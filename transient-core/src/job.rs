@@ -129,7 +129,7 @@ fn ping_nodes() -> Cloud<()> {
         let nodes = local(get_nodes());
         let node = local(for_(nodes.iter().filter(|n| **n != mynode).cloned().collect::<Vec<_>>()));
         ping_one(mynode, node);
-        cempty::<()>()
+        cempty()
     }
 }
 
@@ -165,7 +165,7 @@ fn launch_jobs_for_node(node: &Node) -> Trans<()> {
 
 /// `(abduce >> x >> empty) <|> return ()` logged: runs `x` aside and goes on (`forkCloud`)
 pub fn fork_cloud(x: Cloud<()>) -> Cloud<()> {
-    let aside = cdo! { [x] local(abduce()); x; cempty::<()>() };
+    let aside = cdo! { [x] local(abduce()); x; cempty() };
     aside | cpure(())
 }
 

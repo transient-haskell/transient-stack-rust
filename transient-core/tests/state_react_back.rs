@@ -144,7 +144,7 @@ fn a_handler_that_stops_ends_the_backtracking() {
     let log: Log = Arc::default();
     let t = tdo! { [log]
         on_undo(push(&log, "a"), push(&log, "undo a"));
-        on_undo(push(&log, "b"), tdo! { push(&log, "undo b"); empty::<()>() });
+        on_undo(push(&log, "b"), tdo! { push(&log, "undo b"); empty() });
         undo::<()>()
     };
     keep_all(t);

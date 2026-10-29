@@ -321,7 +321,7 @@ fn x13_a_handler_that_stops_cuts_the_chain() {
     let (l1, l2) = (log.clone(), log.clone());
     let t = tdo! { [l2]
         on_exception(move |_: Boom| say(&l1, "primero"));
-        on_exception(move |_: Boom| tdo! { say(&l2, "segundo y paro"); empty::<()>() });
+        on_exception(move |_: Boom| tdo! { say(&l2, "segundo y paro"); empty() });
         thr(boom("x"))
     };
     keep_all(t);

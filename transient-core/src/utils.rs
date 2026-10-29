@@ -53,7 +53,7 @@ pub fn init_web_app_in_with<A: Loggable + Send + Sync + 'static>(dir: &std::path
 fn init_web_app_with<A: Loggable + Send + Sync + 'static>(table: Closures, node: Node, app: Cloud<A>) -> Trans<A> {
     let listening = tdo! {
         listen(node.clone());
-        empty::<()>()
+        empty()
     };
     let app = wormhole(node.clone(), app).un_cloud();
     tdo! {

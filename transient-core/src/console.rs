@@ -267,19 +267,19 @@ fn core_options(root: Arc<TNode>, console: Arc<Console>) -> Trans<()> {
     let end = tdo! {
         option("end", "exit");
         exit_left("end");
-        empty::<()>()
+        empty()
     };
     let options = tdo! {
         [console]
         option("options", "show the active options");
         lift_io({ let console = console.clone(); move || console.show() });
-        empty::<()>()
+        empty()
     };
     let ps = tdo! {
         [root]
         option("ps", "show threads");
         lift_io({ let root = root.clone(); move || print!("{}", root.show_tree()) });
-        empty::<()>()
+        empty()
     };
     let save = tdo! {
         option("save", "commit the current execution state to permanent storage now");
@@ -287,12 +287,12 @@ fn core_options(root: Arc<TNode>, console: Arc<Console>) -> Trans<()> {
             sync_cache();
             println!("\nSaved!!");
         });
-        empty::<()>()
+        empty()
     };
     let save_on_exit = tdo! {
         option("saveonexit", "commit the current execution state to permanent storage on exit");
         lift_io(save_on_exit);
-        empty::<()>()
+        empty()
     };
     // `savepol [<max objects> [<seconds>]]`: the policy of the cache (the defaults are those of the original: 1000 and 10)
     let savepol = tdo! {
@@ -300,7 +300,7 @@ fn core_options(root: Arc<TNode>, console: Arc<Console>) -> Trans<()> {
         let max = input_default(1000usize, |_| true, "max number of cached objects?");
         let secs = input_default(10u64, |_| true, "seconds between check for objects to be saved?");
         lift_io(move || save_policy(Duration::from_secs(secs), max));
-        empty::<()>()
+        empty()
     };
     end | options | ps | save | save_on_exit | savepol
 }
